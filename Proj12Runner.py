@@ -1,3 +1,5 @@
+#import required libraries
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
@@ -5,23 +7,25 @@ import sys
 import matplotlib.dates as mdates
 import math
 
+#Create runner class
 
 class Runner:
         
     @staticmethod
     def run(args):
 
+        #Arguments passed through main program
         file_name = args[0]
         rows = int(args[1])
 
         data = pd.read_csv(file_name)
-        
+        #rename columns to make this easier for reading and plotting
         data.rename(columns={"Systolic (mmHg)":"Syst",
                             "Diastolic (mmHg)":"Dias"}, inplace=True)
-        
+        #change dates format for easier visibility when plotting
         data2 = data.copy()
         data2["Date"] = pd.to_datetime(data2["Date"])
-        
+        #group data and calculate values needed for plotting
         data3 = data2.groupby("Date")[["Syst", "Dias", "Pulse (bpm)"]].mean().reset_index()
         
         data4 = data3.sort_values(by="Date", ascending = True)
@@ -35,13 +39,11 @@ class Runner:
         min_value = row_data[["Syst", "Dias", "Pulse (bpm)"]].min().min()
         max_value = row_data[["Syst", "Dias", "Pulse (bpm)"]].max().max()
 
-        
+        #display header for the output of the program along with specific values I am searching for based on arguments
         print ('args = [ ',file_name, ',', rows,' ]')
         print()
         print ('I certify that this program is my own work\n'
-                'and is not the work of others. I agree\n'
-                'not to share my solution with others.\n'
-                'Ryan Maldonado.')
+                'and is not the work of others.')
         print()
         print('Collapse the data into unique rows')
         print("Number of unique rows: ", data4_rows)
@@ -56,7 +58,7 @@ class Runner:
         print()
         print("Mean values for columns of interest in rows to plot")
         print(row_avg)
-        
+        #plot the data and combine the line plots into one graph. 
         fig, ax = plt.subplots()
 
         myFmt = mdates.DateFormatter('%Y-%m-%d')
@@ -64,11 +66,10 @@ class Runner:
         
         ax.plot(row_data["Date"], row_data["Syst"], marker = "o", markersize = 4, label ="Syst")
         ax.plot(row_data["Date"], row_data["Dias"], marker = "o", markersize = 4, label ="Dias")
-        ax.plot(row_data["Date"], row_data["Pulse (bpm)"], marker = "o", markersize =4, label ="Pulse")
-
+        ax.plot(row_data["Date"], row_data["Pulse (bpm)"], marker = "o", markersize =4, label ="Pulse")                
         ax.legend(loc='center')
         ax.set_title("Ryan Maldonado")
-        
+        #set the x and y label parameters for easier visibility when reading plot. 
         ax.set_xlabel("Date")
         ax.tick_params(axis ='x', labelrotation = 90)
 
